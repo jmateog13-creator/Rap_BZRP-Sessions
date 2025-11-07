@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activitat: El Gran Misteri BZRP</title>
+    <!-- Importació de les noves fonts de Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Roboto Mono', monospace; 
+            background-color: #0a0a0f; /* Negre-Blau BZRP */
+            color: #e0e0e0; /* Text clar */
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #12121c; /* Fons de bloc fosc */
+            border: 1px solid #00ffff; /* Blau cian BZRP */
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); /* Resplendor cian */
+        }
+        h1, h2, h3 {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #00ffff; /* Cian BZRP */
+            border-bottom: 2px solid #00ffff;
+            padding-bottom: 5px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            border: none;
+        }
+
+        /* ----- Pantalla d'Inici ----- */
+        #pantalla-inicio {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            background-color: #12121c;
+            border: 1px solid #00ffff;
+            border-radius: 10px;
+            max-width: 800px;
+            margin: 40px auto;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+        }
+        #pantalla-inicio h1 { 
+            border: none;
+            font-size: 2.5em; 
+        }
+        #pantalla-inicio h2 {
+            border: none;
+            color: #fff;
+            font-size: 1.4em; 
+        }
+        #pantalla-inicio p {
+            font-size: 1.1em;
+        }
+        #pantalla-inicio ol { 
+            text-align: left; 
+            display: inline-block; 
+            margin-top: 20px;
+            font-size: 1.1em;
+            list-style-type: '» ';
+            padding-left: 20px;
+        }
+        #pantalla-inicio li { 
+            margin-bottom: 10px; 
+        }
+
+        #contingut-principal {
+            display: none;
+        }
+
+        /* ----- Secció de Teoria (Estil Revista Digital) ----- */
+        .teoria {
+            background-color: #1a1a2e;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        /* Títol "Què està passant" més gran i centrat */
+        .teoria h2 {
+            font-size: 2.2em;
+            text-align: center;
+            border-bottom: 4px double #00ffff; /* Vora més gruixuda */
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+        }
+
+        .teoria p {
+            font-size: 1.1em;
+        }
+        
+        /* NOUS Blocs de Teoria (Estil Reel/Revista) */
+        .teoria-punt {
+            background-color: #12121c; /* Més fosc que el fons de la teoria */
+            border: 1px solid #00ffff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .teoria-punt:hover {
+            transform: translateY(-5px); /* Efecte "lift" */
+            box-shadow: 0 8px 15px rgba(0, 255, 255, 0.2);
+        }
+        .teoria-punt h3 {
+            border-bottom: none; /* Treiem la vora global dels h3 */
+            padding-bottom: 0;
+            margin-top: 0;
+            font-size: 1.5em; /* Més gran que el text */
+        }
+        .teoria-punt ul {
+            list-style-type: '» ';
+            padding-left: 20px;
+        }
+        .teoria-punt li {
+            margin-bottom: 10px;
+        }
+        /* Ressaltar paraules clau */
+        .teoria strong {
+            color: #00ffff;
+            font-weight: 700;
+        }
+        .exemple-bloc {
+            background-color: #0a0a0f;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            border-left: 3px solid #00ffff;
+        }
+        /* Estil especial per a la conclusió */
+        .conclusio {
+            background-color: #1a1a2e;
+            border: 2px dashed #00ffff;
+            box-shadow: none;
+        }
+        .conclusio p {
+            font-size: 1.2em; /* Text final més gran */
+            text-align: center;
+        }
+        /* --- Fi Estils Teoria --- */
+
+        /* ----- Secció de Quiz ----- */
+        .instruccions {
+            background-color: #1a1a2e;
+            border: 1px solid #00ffff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        .pregunta-bloc {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background-color: #1a1a2e;
+            transition: border-color 0.3s;
+        }
+        hr {
+            border-color: #444;
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin: 8px 0;
+            cursor: pointer;
+            color: #c0c0c0;
+        }
+        label:hover {
+            color: #ffffff;
+        }
+        select {
+            background-color: #333;
+            color: #fff;
+            font-family: 'Roboto Mono', monospace;
+            border: 1px solid #00ffff;
+            border-radius: 5px;
+            padding: 8px;
+            font-size: 1em;
+            width: 100%;
+        }
+        .check-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #000; 
+            background: linear-gradient(45deg, #00ffff, #007f7f);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+        }
+        .check-button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 15px #00ffff;
+        }
+        
+        /* NOU ESTIL PER AL BOTÓ DE REINICIAR */
+        .restart-button {
+            background: #666; /* Un color secundari */
+            margin-top: 10px;
+        }
+        .restart-button:hover {
+            background: #888;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+
+        /* ----- Estils de Feedback (Correcte/Incorrecte) ----- */
+        #feedback-area {
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none; 
+        }
+
+        /* NOU: Estil per a CADA pregunta individual (Test i V/F) */
+        .pregunta-individual {
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 2px solid transparent; /* Vora base transparent */
+            background-color: #12121c;
+        }
+        .pregunta-individual.correcte {
+            border-color: #5cb85c;
+            background-color: #1a3a1a;
+        }
+        .pregunta-individual.incorrecte {
+            border-color: #d9534f;
+            background-color: #3a1a1a;
+        }
+
+        /* Mantenim l'estil per als SELECTS de Missió 2 */
+        select.correcte {
+            border: 2px solid #5cb85c !important; 
+        }
+        select.incorrecte {
+            border: 2px solid #d9534f !important;
+        }
+
+        /* Estils per al text de feedback final */
+        .feedback-correcte {
+            background-color: #1a4a1a;
+            color: #5cb85c;
+            border: 1px solid #5cb85c;
+        }
+        .feedback-incorrecte {
+            background-color: #4a1a1a;
+            color: #d9534f;
+            border: 1px solid #d9534f;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================== -->
+    <!--     PANTALLA D'INICI                           -->
+    <!-- ============================================== -->
+    <div id="pantalla-inicio">
+        <h1><span style="font-size: 1.5em;">🕵️‍♂️</span><br>El Gran Misteri BZRP</h1>
+        <h2>Missió: Detectiu de Telecomunicacions</h2>
+        <p>Estàs a punt d'entrar a l'anàlisi de l'estratègia de Bizarrap.</p>
+        
+        <h2>El teu objectiu:</h2>
+        <ol>
+            <li>Llegir la "Teoria" per entendre el misteri.</li>
+            <li>Completar el "Quiz" per demostrar que ets un/a detectiu de primera.</li>
+        </ol>
+        
+        <button id="startButton" class="check-button" style="max-width: 300px;">Començar Missió</button>
+    </div>
+
+
+    <!-- ============================================== -->
+    <!--     CONTINGUT PRINCIPAL (Amagat)               -->
+    <!-- ============================================== -->
+    <div id="contingut-principal">
+        <div class="container">
+            <h1><span style="font-size: 1.5em;">🕵️‍♂️</span><br>El Gran Misteri BZRP</h1>
+            
+            <!-- ============================================== -->
+            <!--     PART 1: BLOC DE TEORIA (El Resum)          -->
+            <!-- ============================================== -->
+            <div class="teoria">
+                <h2>QUÈ ESTÀ PASSANT?</h2>
+                <p>Ei! El que estàs veient és una de les estratègies de <strong>comunicació i telecomunicacions</strong> més brillants dels últims anys. Bizarrap ha creat un <strong>ARG (Joc de Realitat Alternativa)</strong> per generar una expectació (*hype*) massiva. Ha convertit els seus fans en detectius.</p>
+
+                <div class="teoria-punt">
+                    <h3>1. El Concepte: El Final d'una Era</h3>
+                    <p>Bizarrap ha decidit "tancar un cicle". Ha canviat el títol de TOTES les seves sessions a YouTube. Ara, totes tenen la numeració <strong>"X / 66"</strong>. Això anuncia que la seva saga acabarà a la número 66.</p>
+                    <div class="exemple-bloc">
+                        <p><strong>Exemple:</strong> Ara la sessió de <strong>Shakira</strong> és la <strong>#53/66</strong> i la de <strong>Peso Pluma</strong> la <strong>#55/66</strong>.</p>
+                    </div>
+                </div>
+
+                <div class="teoria-punt">
+                    <h3>2. La Senyal: La Sessió #0</h3>
+                    <p>La nova cançó amb Daddy Yankee no és la #62 (la que tocaria), sinó la <strong>#0/66</strong>. És una sessió "especial", el pròleg, l'inici del final. La tria de Daddy Yankee (el <strong>"Big Boss"</strong>) és totalment simbòlica.</p>
+                </div>
+
+                <div class="teoria-punt">
+                    <h3>3. El Joc: L'ARG</h3>
+                    <p>Biza no ho anuncia, sinó que amaga pistes:</p>
+                    <ul>
+                        <li><strong>Pista 1 (Instagram):</strong> Al post d'anunci, etiqueta un compte misteriós: <code>@averigua.bien</code>.</li>
+                        <li><strong>Pista 2 (Comptes Falsos):</strong> Aquest compte porta a altres, com <code>@ignorar</code>, amb fotos penjades des de l'any 2011.</li>
+                    </ul>
+                </div>
+
+                <div class="teoria-punt">
+                    <h3>4. La Clau: Dins la Música</h3>
+                    <p>La pista més important estava <strong>dins de la pròpia cançó</strong>.</p>
+                    <ul>
+                        <li><strong>La Lletra:</strong> Daddy Yankee diu: <strong>"Código 787"</strong>.</li>
+                        <li><strong>La Contrasenya:</strong> Aquest número, "787", és la contrasenya per entrar a la web secreta de <code>bizarrap.com</code>.</li>
+                    </ul>
+                </div>
+
+                <div class="teoria-punt">
+                    <h3>5. El Significat: Connexió</h3>
+                    <p>El "787" no és un número a l'atzar. És el <strong>prefix telefònic de Puerto Rico</strong>, el bressol del Reggaeton i la llar de Daddy Yankee. És un homenatge.</p>
+                </div>
+
+                <div class="teoria-punt">
+                    <h3>6. La Recompensa: La Web Secreta</h3>
+                    <p>Si poses el codi "787" a la web, s'obre el "mapa" complet de les 66 sessions. Aquí es confirma tot:</p>
+                    <ul>
+                        <li>Mostra les 66 sessions. Les últimes 5 (62-66) estan "bloquejades".</li>
+                        <li>La sessió <strong>#42</strong> també apareix bloquejada, suggerint un altre misteri.</li>
+                        <li>La web és interactiva: et deixa "Proposar un artista" per a la #63.</li>
+                    </ul>
+                </div>
+
+                <div class="teoria-punt conclusio">
+                    <h3>Conclusió</h3>
+                    <p>Bizarrap ha utilitzat una estratègia <strong>transmèdia</strong>: ha repartit la informació per diferents plataformes (YouTube, Instagram, Lletra, Web) i ha obligat el públic a moure's entre elles per entendre la història completa.</p>
+                </div>
+            </div>
+
+            <!-- ============================================== -->
+            <!--     PART 2: QUIZ INTERACTIU (Les Preguntes)   -->
+            <!-- ============================================== -->
+            <h2>Quiz: Missió Detectiu BZRP 🕵️‍♂️</h2>
+            <div class="instruccions">
+                <p>Has llegit la teoria? Demostra que ets un/a bon/a detectiu!</p>
+                <p>Respon a les preguntes i prem "Comprovar Missió" al final.</p>
+            </div>
+
+            <!-- SECCIÓ 1: 5 PREGUNTES TIPUS TEST -->
+            <div class="pregunta-bloc" id="p1-bloc">
+                <h3>Missió 1: Preguntes de Selecció (Test)</h3>
+                
+                <!-- NOU: Wrapper DIV individual per a feedback -->
+                <div class="pregunta-individual" id="q-p1-1">
+                    <p><strong>Pregunta 1.1:</strong> Amb quin número ha sortit la nova sessió de Daddy Yankee?</p>
+                    <label><input type="radio" name="p1-1" value="59"> #59</label>
+                    <label><input type="radio" name="p1-1" value="66"> #66</label>
+                    <label><input type="radio" name="p1-1" value="0"> #0/66</label>
+                </div>
+                
+                <hr>
+                <div class="pregunta-individual" id="q-p1-2">
+                    <p><strong>Pregunta 1.2:</strong> Què implica el nou sistema de numeració (ex: 15/66, 41/66)?</p>
+                    <label><input type="radio" name="p1-2" value="error"> Que hi ha un error a YouTube.</label>
+                    <label><input type="radio" name="p1-2" value="saga"> Que Biza està tancant un "cicle" o "saga" final de 66 cançons.</label>
+                    <label><input type="radio" name="p1-2" value="remix"> Que totes les cançons antigues tindran un remix.</label>
+                </div>
+
+                <hr>
+                <div class="pregunta-individual" id="q-p1-3">
+                    <p><strong>Pregunta 1.3:</strong> Quin compte d'Instagram va etiquetar Bizarrap al post d'anunci?</p>
+                    <label><input type="radio" name="p1-3" value="ignorar"> @ignorar</label>
+                    <label><input type="radio" name="p1-3" value="daddyyankee"> @daddyyankee</label>
+                    <label><input type="radio" name="p1-3" value="averigua"> @averigua.bien</label>
+                </div>
+
+                <hr>
+                <div class="pregunta-individual" id="q-p1-4">
+                    <p><strong>Pregunta 1.4:</strong> A la web secreta, quin número de sessió apareix "bloquejat" (a més de les últimes 5)?</p>
+                    <label><input type="radio" name="p1-4" value="23"> #23</label>
+                    <label><input type="radio" name="p1-4" value="42"> #42</label>
+                    <label><input type="radio" name="p1-4" value="53"> #53</label>
+                </div>
+
+                <hr>
+                <div class="pregunta-individual" id="q-p1-5">
+                    <p><strong>Pregunta 1.5:</strong> Què et permet fer la web secreta a la Sessió #63?</p>
+                    <label><input type="radio" name="p1-5" value="proposar"> Proposar un artista</label>
+                    <label><input type="radio" name="p1-5" value="escoltar"> Escoltar un tros de la cançó</label>
+                    <label><input type="radio" name="p1-5" value="comprar"> Comprar la sessió</label>
+                </div>
+            </div>
+
+            <!-- SECCIÓ 2: 3 PREGUNTES DE RELACIONAR -->
+            <div class="pregunta-bloc" id="p2-bloc">
+                <h3>Missió 2: Relacionar Pistes (Conceptes)</h3>
+                <p>Relaciona cada pista amb la seva resposta correcta.</p>
+                
+                <label for="p2-1">La pista per trobar la contrasenya de la web secreta estava...</label>
+                <select id="p2-1" data-resposta="lletra">
+                    <option value="">-- Tria una opció --</option>
+                    <option value="lletra">...amagada a la lletra de la cançó de Daddy Yankee.</option>
+                    <option value="instagram">...escrita al compte @averigua.bien.</option>
+                    <option value="video">...escrita al vídeo de Quevedo.</option>
+                </select>
+                <hr>
+                <label for="p2-2">La contrasenya secreta és el número...</label>
+                <select id="p2-2" data-resposta="787">
+                    <option value="">-- Tria una opció --</option>
+                    <option value="066">066</option>
+                    <option value="787">787</option>
+                    <option value="2011">2011</option>
+                </select>
+                <hr>
+                <label for="p2-3">Aquest número ("787") és important perquè és...</label>
+                <select id="p2-3" data-resposta="puertorico">
+                    <option value="">-- Tria una opció --</option>
+                    <option value="casa">...el número de la casa de Bizarrap.</option>
+                    <option value="puertorico">...el prefix telefònic de Puerto Rico (d'on és Daddy Yankee).</option>
+                    <option value="any">...l'any en què Biza va començar a produir.</option>
+                </select>
+            </div>
+
+            <!-- SECCIÓ 3: 4 PREGUNTES VERITABLE/FALS -->
+            <div class="pregunta-bloc" id="p3-bloc">
+                <h3>Missió 3: Veritable o Fals</h3>
+
+                <div class="pregunta-individual" id="q-p3-1">
+                    <p><strong>Pregunta 3.1:</strong> Quan entres a la web secreta, pots escoltar totes les 66 cançons, incloses les noves.</p>
+                    <label><input type="radio" name="p3-1" value="v"> Veritable</label>
+                    <label><input type="radio" name="p3-1" value="f"> Fals</label>
+                </div>
+                
+                <hr>
+                <div class="pregunta-individual" id="q-p3-2">
+                    <p><strong>Pregunta 3.2:</strong> L'estratègia de Bizarrap s'anomena "transmèdia" perquè barreja diferents mitjans (Instagram, YouTube, Web).</p>
+                    <label><input type="radio" name="p3-2" value="v"> Veritable</label>
+                    <label><input type="radio" name="p3-2" value="f"> Fals</label>
+                </div>
+                
+                <hr>
+                <div class="pregunta-individual" id="q-p3-3">
+                    <p><strong>Pregunta 3.3:</strong> El compte d'Instagram <code>@ignorar</code> tenia fotos penjades des de l'any 2024.</p>
+                    <label><input type="radio" name="p3-3" value="v"> Veritable</label>
+                    <label><input type="radio" name="p3-3" value="f"> Fals</label>
+                </div>
+                                
+                <hr>
+                <div class="pregunta-individual" id="q-p3-4">
+                    <p><strong>Pregunta 3.4:</strong> El número "66" significa que Bizarrap farà 66 sessions més a partir d'ara.</p>
+                    <label><input type="radio" name="p3-4" value="v"> Veritable</label>
+                    <label><input type="radio" name="p3-4" value="f"> Fals</label>
+                </div>
+            </div>
+
+            <button id="checkButton" class="check-button">Comprovar Missió!</button>
+            
+            <button id="restartButton" class="check-button restart-button" style="display: none;">Tornar a començar</button>
+
+            <div id="feedback-area"></div>
+        </div>
+    </div>
+
+    <!-- 
+      =======================================================
+      *** MÀGIA JAVASCRIPT (Cervell del Quiz) ***
+      =======================================================
+    -->
+    <script>
+        // Lògica per a la pantalla d'inici
+        document.getElementById('startButton').addEventListener('click', function() {
+            document.getElementById('pantalla-inicio').style.display = 'none';
+            document.getElementById('contingut-principal').style.display = 'block';
+            window.scrollTo(0, 0); // Puja a dalt de tot
+        });
+
+        // Lògica per al botó de comprovació del quiz
+        document.getElementById('checkButton').addEventListener('click', function() {
+            let totalPreguntes = 12; // 5 test + 3 relacionar + 4 V/F
+            let correctes = 0;
+            
+            // --- Resposta Correcta de CADA pregunta ---
+            const respostes = {
+                'p1-1': '0',
+                'p1-2': 'saga',
+                'p1-3': 'averigua',
+                'p1-4': '42',
+                'p1-5': 'proposar',
+                'p2-1': 'lletra',
+                'p2-2': '787',
+                'p2-3': 'puertorico',
+                'p3-1': 'f', // Fals, moltes estan bloquejades
+                'p3-2': 'v', // Veritable, és transmèdia
+                'p3-3': 'f', // Fals, són de 2011
+                'p3-4': 'f'  // Fals, és el final del cicle
+            };
+
+            const feedbackArea = document.getElementById('feedback-area');
+            
+            // Funció per marcar visualment (per a blocs individuals i selects)
+            function marcar(element, esCorrecte) {
+                element.classList.remove('correcte', 'incorrecte');
+                if (esCorrecte) {
+                    element.classList.add('correcte');
+                } else {
+                    element.classList.add('incorrecte');
+                }
+            }
+
+            // 1. Comprovar TEST (5 preguntes)
+            const p1_1_resposta = document.querySelector('input[name="p1-1"]:checked');
+            let p1_1_correcte = (p1_1_resposta && p1_1_resposta.value === respostes['p1-1']);
+            marcar(document.getElementById('q-p1-1'), p1_1_correcte); // Marca el DIV individual
+            
+            const p1_2_resposta = document.querySelector('input[name="p1-2"]:checked');
+            let p1_2_correcte = (p1_2_resposta && p1_2_resposta.value === respostes['p1-2']);
+            marcar(document.getElementById('q-p1-2'), p1_2_correcte);
+            
+            const p1_3_resposta = document.querySelector('input[name="p1-3"]:checked');
+            let p1_3_correcte = (p1_3_resposta && p1_3_resposta.value === respostes['p1-3']);
+            marcar(document.getElementById('q-p1-3'), p1_3_correcte);
+            
+            const p1_4_resposta = document.querySelector('input[name="p1-4"]:checked');
+            let p1_4_correcte = (p1_4_resposta && p1_4_resposta.value === respostes['p1-4']);
+            marcar(document.getElementById('q-p1-4'), p1_4_correcte);
+            
+            const p1_5_resposta = document.querySelector('input[name="p1-5"]:checked');
+            let p1_5_correcte = (p1_5_resposta && p1_5_resposta.value === respostes['p1-5']);
+            marcar(document.getElementById('q-p1-5'), p1_5_correcte);
+
+            // Sumar punts de test
+            if (p1_1_correcte) correctes++;
+            if (p1_2_correcte) correctes++;
+            if (p1_3_correcte) correctes++;
+            if (p1_4_correcte) correctes++;
+            if (p1_5_correcte) correctes++;
+
+            // 2. Comprovar RELACIONAR (3 preguntes) - Aquesta ja era individual
+            let p2_1_correcte = document.getElementById('p2-1').value === respostes['p2-1'];
+            marcar(document.getElementById('p2-1'), p2_1_correcte);
+            if(p2_1_correcte) correctes++;
+            
+            let p2_2_correcte = document.getElementById('p2-2').value === respostes['p2-2'];
+            marcar(document.getElementById('p2-2'), p2_2_correcte);
+            if(p2_2_correcte) correctes++;
+
+            let p2_3_correcte = document.getElementById('p2-3').value === respostes['p2-3'];
+            marcar(document.getElementById('p2-3'), p2_3_correcte);
+            if(p2_3_correcte) correctes++;
+
+            // 3. Comprovar V/F (4 preguntes)
+            const p3_1_resposta = document.querySelector('input[name="p3-1"]:checked');
+            let p3_1_correcte = (p3_1_resposta && p3_1_resposta.value === respostes['p3-1']);
+            marcar(document.getElementById('q-p3-1'), p3_1_correcte);
+            
+            const p3_2_resposta = document.querySelector('input[name="p3-2"]:checked');
+            let p3_2_correcte = (p3_2_resposta && p3_2_resposta.value === respostes['p3-2']);
+            marcar(document.getElementById('q-p3-2'), p3_2_correcte);
+            
+            const p3_3_resposta = document.querySelector('input[name="p3-3"]:checked');
+            let p3_3_correcte = (p3_3_resposta && p3_3_resposta.value === respostes['p3-3']);
+            marcar(document.getElementById('q-p3-3'), p3_3_correcte);
+
+            const p3_4_resposta = document.querySelector('input[name="p3-4"]:checked');
+            let p3_4_correcte = (p3_4_resposta && p3_4_resposta.value === respostes['p3-4']);
+            marcar(document.getElementById('q-p3-4'), p3_4_correcte);
+            
+            // Sumar punts de V/F
+            if (p3_1_correcte) correctes++;
+            if (p3_2_correcte) correctes++;
+            if (p3_3_correcte) correctes++;
+            if (p3_4_correcte) correctes++;
+            
+            // 4. Mostrar Feedback Final (DUA - Feedback Immediat)
+            feedbackArea.style.display = 'block';
+            if (correctes === totalPreguntes) {
+                feedbackArea.innerText = `Missió Complerta! Has clavat ${correctes} de ${totalPreguntes}! Ets un detectiu de primera! 🕵️‍♂️`;
+                feedbackArea.className = 'feedback-correcte';
+            } else if (correctes > totalPreguntes / 2) {
+                feedbackArea.innerText = `Bon treball! Has encertat ${correctes} de ${totalPreguntes}. Revisa les pistes marcades en vermell.`;
+                feedbackArea.className = 'feedback-correcte'; // Encara és un bon resultat
+            } else {
+                feedbackArea.innerText = `Encara queden pistes per resoldre! Has encertat ${correctes} de ${totalPreguntes}. Torna a llegir la teoria i revisa les respostes en vermell.`;
+                feedbackArea.className = 'feedback-incorrecte';
+            }
+
+            // Mostrar el botó de reiniciar
+            document.getElementById('restartButton').style.display = 'block';
+
+            // Fer scroll cap al feedback
+            feedbackArea.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Lògica per al NOU botó de reiniciar
+        document.getElementById('restartButton').addEventListener('click', function() {
+            // 1. Resetejar radios
+            const radios = document.querySelectorAll('input[type="radio"]');
+            radios.forEach(radio => radio.checked = false);
+            
+            // 2. Resetejar selects
+            const selects = document.querySelectorAll('select');
+            selects.forEach(select => {
+                select.selectedIndex = 0;
+                select.classList.remove('correcte', 'incorrecte');
+            });
+            
+            // 3. Resetejar blocs de preguntes individuals (NOU)
+            const individuals = document.querySelectorAll('.pregunta-individual');
+            individuals.forEach(div => {
+                div.classList.remove('correcte', 'incorrecte');
+            });
+            
+            // 4. Amagar feedback i botó de reinici
+            const feedbackArea = document.getElementById('feedback-area');
+            feedbackArea.style.display = 'none';
+            feedbackArea.innerText = '';
+            document.getElementById('restartButton').style.display = 'none';
+            
+            // 5. Pujar a dalt del quiz
+            document.getElementById('contingut-principal').scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+
+</body>
+</html>

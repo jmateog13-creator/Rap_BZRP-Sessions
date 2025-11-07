@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrumentació 0/66 - BZRP</title>
+    
+    <!-- NOVES FONTS - MÉS LLEGIBLES (DUA) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Oswald per Títols, Roboto per Text, Roboto Mono per Elements "Tech" -->
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Roboto+Mono:wght@700&family=Roboto:wght@400&display=swap" rel="stylesheet">
+
+    <!-- CSS ACTUALITZAT AMB PALETA BZRP I NOVES FONTS -->
+    <style>
+        :root {
+            /* --- NOVA PALETA BZRP --- */
+            --font-title: 'Oswald', sans-serif; /* CANVI DE FONT */
+            --font-text: 'Roboto', sans-serif; /* CANVI DE FONT */
+            --font-mono: 'Roboto Mono', monospace; /* CANVI DE FONT */
+            
+            --bzrp-blue: #00f0ff;
+            --bzrp-blue-dark: #008c96;
+            --bzrp-bg: #0d0d0d;
+            --bzrp-bg-panel: #1a1a1a;
+            --bzrp-text: #e0e0e0;
+            --bzrp-text-dark: #888;
+            --correct-bg: #00380d;
+            --correct-border: #00ff41;
+            --incorrect-bg: #380000;
+            --incorrect-border: #ff0000;
+        }
+
+        body { 
+            font-family: var(--font-text); /* CANVI (Base a Roboto) */
+            background-color: var(--bzrp-bg);
+            color: var(--bzrp-text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-family: var(--font-title); /* CANVI DE FONT */
+            text-transform: uppercase; /* ESTIL AFEGIT */
+            color: var(--bzrp-blue);
+            font-size: 2.5em; /* CANVI DE FONT */
+            line-height: 1.4;
+            text-align: center;
+            text-shadow: 0 0 5px var(--bzrp-blue);
+            margin-bottom: 30px;
+        }
+        h2, h3 {
+            font-family: var(--font-title); /* CANVI DE FONT */
+            text-transform: uppercase; /* ESTIL AFEGIT */
+            color: var(--bzrp-blue);
+            font-size: 1.5em; /* CANVI DE FONT */
+            line-height: 1.4;
+        }
+        
+        /* --- NOU: Pantalla d'Inici --- */
+        #pantalla-inici {
+            background-color: var(--bzrp-bg-panel);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
+            border: 1px solid #333;
+            text-align: center;
+        }
+        #pantalla-inici h1 {
+            margin-top: 0; /* Treure marge superior */
+        }
+        #pantalla-inici ul {
+            list-style: none;
+            padding: 0;
+            display: inline-block;
+            text-align: left;
+            margin: 20px 0;
+        }
+        #pantalla-inici li {
+            font-family: var(--font-text);
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+        #pantalla-inici p {
+            font-family: var(--font-text);
+            font-size: 0.9em;
+            color: var(--bzrp-text-dark);
+        }
+        /* NOU: Amagar el joc per defecte */
+        #contingut-joc {
+            display: none;
+        }
+        /* --- Fi Pantalla d'Inici --- */
+
+
+        /* --- Paleta d'Instruments --- */
+        #paleta {
+            background-color: var(--bzrp-bg-panel);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
+            margin-bottom: 25px;
+            border: 1px solid #333;
+        }
+        #paleta h2 {
+            margin-top: 0;
+            border-bottom: 2px solid #333;
+            padding-bottom: 15px;
+        }
+        #paleta p {
+            font-family: var(--font-text); /* CANVI (assegurat) */
+            font-size: 0.9em;
+            color: var(--bzrp-text-dark);
+        }
+        
+        /* --- La Línia de Temps --- */
+        #seccions-timeline {
+            background-color: var(--bzrp-bg-panel);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
+            border: 1px solid #333;
+        }
+        .seccio {
+            border-left: 5px solid var(--bzrp-blue);
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #222;
+            border-radius: 0 8px 8px 0;
+            transition: all 0.3s ease;
+        }
+        
+        /* --- Capçalera de Secció (botó X) --- */
+        .seccio-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .seccio-header h3 {
+            margin: 0;
+            font-size: 1.3em; /* Ajust */
+        }
+        .esborrar-btn {
+            font-family: var(--font-mono); /* CANVI DE FONT */
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em; /* CANVI DE FONT */
+            font-weight: 700;
+            padding: 5px 10px;
+            transition: background-color 0.2s;
+        }
+        .esborrar-btn:hover {
+            background-color: #c82333;
+        }
+
+        .desti-drop {
+            border: 2px dashed #444;
+            min-height: 50px;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            background-color: var(--bzrp-bg);
+        }
+        
+        .pista {
+            font-family: var(--font-text); /* CANVI (assegurat) */
+            font-size: 0.9em; /* CANVI (mida) */
+            font-style: italic;
+            color: var(--bzrp-text-dark);
+            background-color: #333;
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        /* --- Caixes d'Instruments (Mantenim colors DUA) --- */
+        .caixa {
+            font-family: var(--font-mono); /* CANVI DE FONT */
+            display: inline-block;
+            padding: 8px 14px; /* Ajust */
+            margin: 4px;
+            border-radius: 20px; /* CANVI (més "píndola") */
+            border: 2px solid #aaa;
+            cursor: grab;
+            font-size: 0.9em; /* CANVI (mida) */
+            font-weight: 700;
+            color: #111; /* Text fosc per a fons clars */
+        }
+        .caixa:active {
+            cursor: grabbing;
+        }
+        
+        /* Colors DUA (es mantenen) */
+        .veu { background-color: #a0e6ff; border-color: #5ac8fa; }
+        .bateria-reggaeton { background-color: #ffb3a0; border-color: #ff6b6b; }
+        .bateria-trap { background-color: #ff8c00; border-color: #e57c00; }
+        .baix { background-color: #fffba0; border-color: #ffda0a; }
+        .sintetitzador { background-color: #a0ffa8; border-color: #50d688; }
+        .trompetes { background-color: #e1a0ff; border-color: #c066ff; }
+        .trombo-solista { background-color: #ffd700; border-color: #e5c100; }
+        
+        /* --- Botó de Comprovar i Modal --- */
+        .check-button {
+            font-family: var(--font-title); /* CANVI DE FONT */
+            text-transform: uppercase; /* ESTIL AFEGIT */
+            display: block;
+            width: 100%;
+            padding: 15px;
+            font-size: 1.3em; /* Ajust */
+            font-weight: 700;
+            color: var(--bzrp-bg);
+            background-color: var(--bzrp-blue);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.2s ease;
+        }
+        .check-button:hover {
+            background-color: #fff;
+            box-shadow: 0 0 10px var(--bzrp-blue);
+        }
+
+        .finestra-emergent {
+            display: none; 
+            position: fixed;
+            z-index: 100;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .finestra-emergent-contingut {
+            background-color: var(--bzrp-bg-panel);
+            border: 1px solid var(--bzrp-blue);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 0 20px var(--bzrp-blue-dark);
+        }
+        .finestra-emergent-contingut h2 {
+            font-size: 1.3em; /* Ajust */
+        }
+        .finestra-emergent-contingut p {
+            font-family: var(--font-text); /* CANVI (assegurat) */
+            font-size: 1em; /* Ajust */
+            color: var(--bzrp-text);
+        }
+        .finestra-emergent-contingut button {
+            font-family: var(--font-title); /* CANVI DE FONT */
+            text-transform: uppercase; /* ESTIL AFEGIT */
+            background-color: var(--bzrp-blue);
+            color: var(--bzrp-bg);
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .finestra-emergent-contingut button:hover {
+            background-color: #fff;
+        }
+
+        /* --- Feedback de Correcció --- */
+        .seccio.correcte {
+            border-left-color: var(--correct-border);
+            background-color: var(--correct-bg);
+        }
+        .seccio.correcte h3 {
+            color: var(--correct-border);
+        }
+        .seccio.incorrecte {
+            border-left-color: var(--incorrect-border);
+            background-color: var(--incorrect-bg);
+        }
+        .seccio.incorrecte h3 {
+            color: var(--incorrect-border);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- ============================================== -->
+        <!--     NOU: PANTALLA D'INICI                      -->
+        <!-- ============================================== -->
+        <div id="pantalla-inici">
+            <h1>Instrumentació de la 0/66 de Bizarrap</h1>
+            <h2>Com Funciona el Joc?</h2>
+            
+            <ul style="text-align: left; display: inline-block; margin-top: 20px;">
+                <li><strong>1. ESCOLTA:</strong> Tingues la sessió #0/66 (Daddy Yankee) a mà.</li>
+                <li><strong>2. ARROSSEGA:</strong> Posa els instruments de la "Paleta" a la secció de temps correcta.</li>
+                <li><strong>3. PISTES:</strong> Fixa't en quantitat d'instruments que et demana cada pista.</li>
+                <li><strong>4. ESBORRA:</strong> Fes [X] per esborrar un bloc sencer, o doble clic per esborrar només 1 instrument.</li>
+                <li><strong>5. COMPROVA:</strong> Fes clic a "Comprovar" al final per veure els teus resultats!</li>
+            </ul>
+            
+            <button id="startBtn" class="check-button">Començar!</button>
+        </div>
+
+        <!-- ============================================== -->
+        <!--     CONTINGUT DEL JOC (AMAGAT INICIALMENT)     -->
+        <!-- ============================================== -->
+        <div id="contingut-joc">
+
+            <!-- ============================================== -->
+            <!--     PALETA D'INSTRUMENTS (ELS TEUS NOUS)       -->
+            <!-- ============================================== -->
+            <div id="paleta">
+                <h2>Paleta d'Instruments</h2>
+                <p>Doble clic per esborrar 1 instrument. Prem [X] per esborrar tot el bloc.</p>
+                
+                <span class="caixa veu" id="veu-paleta" draggable="true">Veu</span>
+                <span class="caixa trompetes" id="trompetes-paleta" draggable="true">Trompetes</span>
+                <span class="caixa baix" id="baix-paleta" draggable="true">Baix</span>
+                <span class="caixa sintetitzador" id="sintetitzador-paleta" draggable="true">Sintetitzador</span>
+                <span class="caixa bateria-reggaeton" id="bateria-reggaeton-paleta" draggable="true">Bateria Reggaeton</span>
+                <span class="caixa bateria-trap" id="bateria-trap-paleta" draggable="true">Bateria Trap</span>
+                <span class="caixa trombo-solista" id="trombo-solista-paleta" draggable="true">Trombó solista</span>
+            </div>
+
+            <!-- ============================================== -->
+            <!--     LÍNIA DE TEMPS (LA TEVA NOVA)              -->
+            <!-- ============================================== -->
+            <div id="seccions-timeline">
+                <h2>Línia de Temps: BZRP #0/66</h2>
+                <p style="font-family: var(--font-text);">Arrossega els instruments que sonen a cada secció.</p>
+                
+                <!-- Aquestes són les teves noves seccions -->
+                <div class="seccio" id="sec-principi">
+                    <div class="seccio-header">
+                        <h3>Principi</h3>
+                        <button class="esborrar-btn" title="Esborrar instruments d'aquest bloc">X</button>
+                    </div>
+                    <p class="pista">Pista: Has de posar 3 instruments.</p>
+                    <div class="desti-drop"></div>
+                </div>
+
+                <div class="seccio" id="sec-0017">
+                    <div class="seccio-header">
+                        <h3>00:17</h3>
+                        <button class="esborrar-btn" title="Esborrar instruments d'aquest bloc">X</button>
+                    </div>
+                    <p class="pista">Pista: Has de posar 4 instruments.</p>
+                    <div class="desti-drop"></div>
+                </div>
+
+                <div class="seccio" id="sec-0025">
+                    <div class="seccio-header">
+                        <h3>00:25</h3>
+                        <button class="esborrar-btn" title="Esborrar instruments d'aquest bloc">X</button>
+                    </div>
+                    <p class="pista">Pista: Has de posar 3 instruments.</p>
+                    <div class="desti-drop"></div>
+                </div>
+                
+                <div class="seccio" id="sec-0042">
+                    <div class="seccio-header">
+                        <h3>00:42</h3>
+                        <button class="esborrar-btn" title="Esborrar instruments d'aquest bloc">X</button>
+                    </div>
+                    <p class="pista">Pista: Has de posar 4 instruments.</p>
+                    <div class="desti-drop"></div>
+                </div>
+
+                <div class="seccio" id="sec-116">
+                    <div class="seccio-header">
+                        <h3>1:16</h3>
+                        <button class="esborrar-btn" title="Esborrar instruments d'aquest bloc">X</button>
+                    </div>
+                    <p class="pista">Pista: Has de posar 4 instruments.</p>
+                    <div class="desti-drop"></div>
+                </div>
+
+                <div class="seccio" id="sec-126">
+                    <div class="seccio-header">
+                        <h3>1:26</h3>
+                        <button class="esborrar-btn" title="Esborrar instruments d'aquest bloc">X</button>
+                    </div>
+                    <p class="pista">Pista: Has de posar 2 instruments.</p>
+                    <div class="desti-drop"></div>
+                </div>
+
+                <div class="seccio" id="sec-133">
+                    <div class="seccio-header">
+                        <h3>1:33</h3>
+                        <button class="esborrar-btn" title="Esborrar instruments d'aquest bloc">X</button>
+                    </div>
+                    <p class="pista">Pista: Has de posar 3 instruments.</p>
+                    <div class="desti-drop"></div>
+                </div>
+                
+                <div class="seccio" id="sec-142">
+                    <div class="seccio-header">
+                        <h3>1:42</h3>
+                        <button class="esborrar-btn" title="Esborrar instruments d'aquest bloc">X</button>
+                    </div>
+                    <p class="pista">Pista: Has de posar 4 instruments.</p>
+                    <div class="desti-drop"></div>
+                </div>
+
+                <div class="seccio" id="sec-153">
+                    <div class="seccio-header">
+                        <h3>1:53</h3>
+                        <button class="esborrar-btn" title="Esborrar instruments d'aquest bloc">X</button>
+                    </div>
+                    <p class="pista">Pista: Has de posar 4 instruments.</p>
+                    <div class="desti-drop"></div>
+                </div>
+
+                <div class="seccio" id="sec-210">
+                    <div class="seccio-header">
+                        <h3>2:10</h3>
+                        <button class="esborrar-btn" title="Esborrar instruments d'aquest bloc">X</button>
+                    </div>
+                    <p class="pista">Pista: Has de posar 4 instruments.</p>
+                    <div class="desti-drop"></div>
+                </div>
+                
+            </div>
+            
+            <button id="comprovarBtn" class="check-button">Comprovar</button>
+        </div> <!-- Fi de #contingut-joc -->
+    </div>
+
+    <!-- Finestra Emergent (Modal) per al Feedback -->
+    <div id="finestra-emergent" class="finestra-emergent">
+        <div class="finestra-emergent-contingut">
+            <h2 id="feedback-titol">Resultats de l'Anàlisi</h2>
+            <p id="feedback-text">Aquí sortiran els teus resultats.</p>
+            <button id="tancarModalBtn">Tancar</button>
+        </div>
+    </div>
+
+
+    <!-- 
+      =======================================================
+      *** MÀGIA JAVASCRIPT (Drag & Drop + Auto-Correcció) ***
+      =======================================================
+    -->
+    <script>
+        // --- NOU: LÒGICA D'INICI ---
+        const startBtn = document.getElementById('startBtn');
+        const pantallaInici = document.getElementById('pantalla-inici');
+        const contingutJoc = document.getElementById('contingut-joc');
+
+        startBtn.addEventListener('click', function() {
+            pantallaInici.style.display = 'none';
+            contingutJoc.style.display = 'block';
+        });
+
+        // --- Lògica del Drag & Drop ---
+        let elementArrossegat = null;
+
+        document.addEventListener('dragstart', function(event) {
+            // Comprova si l'element és una 'caixa'
+            if (event.target.classList.contains('caixa')) {
+                elementArrossegat = event.target;
+                event.dataTransfer.effectAllowed = 'copyMove';
+            }
+        });
+
+        document.addEventListener('dragover', function(event) {
+            event.preventDefault(); // Necessari per permetre el 'drop'
+            const desti = event.target.closest('.desti-drop');
+            if (desti) {
+                event.dataTransfer.dropEffect = 'copy';
+            } else {
+                event.dataTransfer.dropEffect = 'none';
+            }
+        });
+
+        document.addEventListener('drop', function(event) {
+            event.preventDefault();
+            if (elementArrossegat) {
+                const desti = event.target.closest('.desti-drop');
+                if (desti) {
+                    let nouElement;
+                    // Si ve de la paleta, clona'l. Si ja és a la línia, mou-lo.
+                    if (elementArrossegat.id.endsWith('-paleta')) {
+                        nouElement = elementArrossegat.cloneNode(true);
+                        nouElement.id = `caixa-${Date.now()}`; // ID únic
+                    } else {
+                        nouElement = elementArrossegat;
+                    }
+                    desti.appendChild(nouElement);
+                }
+                elementArrossegat = null;
+            }
+        });
+
+        // --- Lògica d'Esborrar 1 (Doble Clic) ---
+        document.addEventListener('dblclick', function(event) {
+            // Esborra només si NO és a la paleta
+            if (event.target.classList.contains('caixa') && !event.target.id.endsWith('-paleta')) {
+                event.target.remove();
+            }
+        });
+
+        // --- Lògica d'Esborrar Bloc (Botó 'X') ---
+        const botonsEsborrar = document.querySelectorAll('.esborrar-btn');
+        botonsEsborrar.forEach(button => {
+            button.addEventListener('click', function() {
+                // Troba la secció "pare" més propera
+                const seccio = this.closest('.seccio');
+                if (seccio) {
+                    // Troba el contenidor d'instruments dins d'aquesta secció
+                    const desti = seccio.querySelector('.desti-drop');
+                    if (desti) {
+                        // Esborra tots els instruments de dins
+                        desti.innerHTML = '';
+                        // Reseteja el color de feedback si n'hi ha
+                        seccio.classList.remove('correcte', 'incorrecte');
+                    }
+                }
+            });
+        });
+
+
+        // --- Lògica del Modal de Feedback ---
+        const modal = document.getElementById('finestra-emergent');
+        const tancarModalBtn = document.getElementById('tancarModalBtn');
+        tancarModalBtn.onclick = function() {
+            modal.style.display = 'none';
+        }
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+        
+        // ==============================================
+        // --- Lògica d'Auto-Correcció ---
+        // ==============================================
+        const comprovarBtn = document.getElementById('comprovarBtn');
+        comprovarBtn.addEventListener('click', function() {
+            
+            // 1. LA TEVA "ANSWER KEY" (CLAU DE RESPOSTES)
+            const respostesCorrectes = {
+                'sec-principi': ['Trompetes', 'Veu', 'Baix'],
+                'sec-0017': ['Trompetes', 'Veu', 'Baix', 'Bateria Reggaeton'],
+                'sec-0025': ['Veu', 'Sintetitzador', 'Baix'],
+                'sec-0042': ['Trompetes', 'Veu', 'Baix', 'Sintetitzador'],
+                'sec-116': ['Trompetes', 'Baix', 'Sintetitzador', 'Bateria Reggaeton'],
+                'sec-126': ['Bateria Trap', 'Veu'],
+                'sec-133': ['Trompetes', 'Baix', 'Veu'],
+                'sec-142': ['Sintetitzador', 'Bateria Reggaeton', 'Veu', 'Baix'],
+                'sec-153': ['Veu', 'Sintetitzador', 'Baix', 'Bateria Reggaeton'], 
+                'sec-210': ['Trompetes', 'Baix', 'Bateria Reggaeton', 'Trombó solista']
+            };
+
+            let totalCorrectes = 0;
+            const seccions = document.querySelectorAll('.seccio');
+            const totalSeccions = seccions.length;
+
+            // 2. Comprova cada secció
+            seccions.forEach(seccio => {
+                const seccioId = seccio.id;
+                const correctes = respostesCorrectes[seccioId] || []; // Respostes correctes per a aquesta secció
+                
+                const destinacio = seccio.querySelector('.desti-drop');
+                const caixesUsuari = destinacio.querySelectorAll('.caixa');
+                
+                // Agafa el text de cada caixa que l'usuari ha arrossegat
+                let respostesUsuari = [];
+                caixesUsuari.forEach(caixa => {
+                    respostesUsuari.push(caixa.innerText.trim());
+                });
+
+                // Compara els dos arrays (sense importar l'ordre)
+                const esCorrecte = compararArrays(correctes, respostesUsuari);
+
+                // Aplica estil visual (DUA - Feedback)
+                seccio.classList.remove('correcte', 'incorrecte');
+                if (esCorrecte) {
+                    seccio.classList.add('correcte');
+                    totalCorrectes++;
+                } else {
+                    seccio.classList.add('incorrecte');
+                }
+            });
+
+            // 3. Mostra el feedback final al modal
+            const feedbackText = document.getElementById('feedback-text');
+            if (totalCorrectes === totalSeccions) {
+                feedbackText.innerText = `Ho has clavat! Has encertat ${totalCorrectes} de ${totalSeccions} seccions. Ets un/a productor/a de primera!`;
+            } else if (totalCorrectes > 0) {
+                feedbackText.innerText = `Bon treball! Has encertat ${totalCorrectes} de ${totalSeccions} seccions. Revisa les que estan en vermell.`;
+            } else {
+                feedbackText.innerText = `Ups! No has encertat cap secció. Torna a escoltar bé la cançó i prova-ho de nou!`;
+            }
+            modal.style.display = 'flex';
+        });
+
+        /**
+         * Funció d'ajuda per comparar dos arrays sense importar l'ordre
+         */
+        function compararArrays(arr1, arr2) {
+            if (arr1.length !== arr2.length) {
+                return false;
+            }
+            // Converteix els arrays en un comptador d'elements
+            const compta = (arr) => arr.reduce((acc, val) => {
+                acc[val] = (acc[val] || 0) + 1;
+                return acc;
+            }, {});
+
+            const recompte1 = compta(arr1);
+            const recompte2 = compta(arr2);
+
+            for (let clau in recompte1) {
+                if (recompte1[clau] !== recompte2[clau]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+    </script>
+</body>
+</html>
