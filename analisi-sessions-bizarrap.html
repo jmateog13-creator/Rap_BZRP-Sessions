@@ -5,23 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anàlisi de Sessions BZRP</title>
     
-    <!-- FONTS (Oswald per Títols, Roboto per Text) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Roboto:wght@400;700&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
 
-    <!-- *** NOU ESTIL "ESTUDI DE DIA" (TEMA CLAR) *** -->
     <style>
         :root {
             --font-title: 'Oswald', sans-serif;
             --font-text: 'Roboto', sans-serif;
+            --font-mono: 'Roboto Mono', monospace; /* Per la ruleta */
             
-            /* Nova Paleta de Colors (Tema Clar) */
+            /* Paleta de Colors (Tema Clar) */
             --primary-blue: #007bff;
-            --light-bg: #f4f4f8; /* Fons general */
-            --light-panel: #ffffff; /* Fons del contenidor */
-            --dark-text: #333333; /* Text principal */
-            --medium-text: #555555; /* Text secundari */
+            --light-bg: #f4f4f8; 
+            --light-panel: #ffffff; 
+            --dark-text: #333333; 
+            --medium-text: #555555; 
             
             --correct-light-bg: #e6ffed;
             --correct-dark: #28a745;
@@ -31,8 +30,8 @@
 
         body { 
             font-family: var(--font-text);
-            background-color: var(--light-bg); /* CANVI */
-            color: var(--dark-text); /* CANVI */
+            background-color: var(--light-bg);
+            color: var(--dark-text);
             line-height: 1.6;
             margin: 0;
             padding: 20px;
@@ -40,19 +39,19 @@
         .container {
             max-width: 700px;
             margin: 0 auto;
-            border: 1px solid #ddd; /* CANVI */
+            border: 1px solid #ddd;
             border-radius: 10px;
-            background-color: var(--light-panel); /* CANVI */
+            background-color: var(--light-panel);
             padding: 30px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* CANVI */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
         
         h1, h2 {
             font-family: var(--font-title);
             text-transform: uppercase;
-            color: var(--primary-blue); /* CANVI */
+            color: var(--primary-blue);
             text-align: center;
-            text-shadow: none; /* CANVI */
+            text-shadow: none;
             letter-spacing: 1px;
         }
         h1 {
@@ -70,15 +69,66 @@
             text-align: center;
             margin-bottom: 20px;
         }
+        
+        /* --- NOU: Ruleta de Selecció --- */
+        .ruleta-container {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            margin: 20px auto;
+        }
+        #ruletaCanvas {
+            width: 100%;
+            height: 100%;
+            transition: transform 5s cubic-bezier(0.25, 1, 0.5, 1); /* Animació de gir */
+        }
+        .ruleta-punter {
+            position: absolute;
+            top: 50%;
+            right: -20px; /* Punter a la dreta */
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 20px solid transparent;
+            border-bottom: 20px solid transparent;
+            border-left: 30px solid var(--incorrect-dark); /* Color del punter */
+            z-index: 10;
+        }
+        /* NOU: Pop-up del Guanyador */
+        #ruleta-resultat {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: none; /* Amagat */
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 20;
+            animation: fadeIn 0.5s ease;
+        }
+        #resultat-text {
+            font-family: var(--font-title);
+            font-size: 2em;
+            color: var(--primary-blue);
+            padding: 20px;
+            animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes zoomIn { from { transform: scale(0.5); } to { transform: scale(1); } }
+        /* --- Fi Ruleta --- */
+        
         #selector-sessio {
             display: block;
             width: 100%;
             padding: 15px;
             font-family: var(--font-text);
             font-size: 1.1em;
-            background-color: #f0f0f0; /* CANVI */
-            color: var(--dark-text); /* CANVI */
-            border: 1px solid #ccc; /* CANVI */
+            background-color: #f0f0f0;
+            color: var(--dark-text);
+            border: 1px solid #ccc;
             border-radius: 8px;
             margin-bottom: 20px;
         }
@@ -91,8 +141,8 @@
             font-weight: 700;
             letter-spacing: 1px;
             text-transform: uppercase;
-            color: #ffffff; /* CANVI */
-            background-color: var(--primary-blue); /* CANVI */
+            color: #ffffff;
+            background-color: var(--primary-blue);
             border: none;
             border-radius: 8px;
             cursor: pointer;
@@ -100,9 +150,16 @@
             transition: all 0.2s ease;
         }
         .bzrp-button:hover {
-            background-color: #0056b3; /* CANVI */
-            box-shadow: none; /* CANVI */
+            background-color: #0056b3;
+            box-shadow: none;
         }
+        /* Botó per girar (diferent) */
+        #girarBtn {
+            background-color: var(--correct-dark);
+            font-size: 1.2em;
+            margin-top: 0;
+        }
+        #girarBtn:hover { background-color: #218838; }
         
         /* --- Contingut del Quiz (Amagat) --- */
         #contingut-quiz {
@@ -110,7 +167,7 @@
         }
 
         #preguntes-container {
-            border-top: 2px solid var(--primary-blue); /* CANVI */
+            border-top: 2px solid var(--primary-blue);
             margin-top: 20px;
             padding-top: 20px;
         }
@@ -120,15 +177,15 @@
             margin-bottom: 20px;
             padding: 20px;
             border-radius: 8px;
-            border: 1px solid #ddd; /* CANVI */
-            background-color: #f9f9f9; /* CANVI */
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
             transition: all 0.3s ease;
         }
         .pregunta-bloc h3 {
             font-family: var(--font-text);
             font-size: 1.1em;
             font-weight: 700;
-            color: var(--dark-text); /* CANVI */
+            color: var(--dark-text);
             margin-top: 0;
             margin-bottom: 15px;
         }
@@ -142,7 +199,7 @@
             transition: background-color 0.2s;
         }
         .pregunta-bloc label:hover {
-            background-color: #e9ecef; /* CANVI */
+            background-color: #e9ecef;
         }
         input[type="radio"] {
             margin-right: 10px;
@@ -150,18 +207,18 @@
         
         /* Feedback de Correcció */
         .pregunta-bloc.correcte {
-            background-color: var(--correct-light-bg); /* CANVI */
-            border-color: var(--correct-dark); /* CANVI */
+            background-color: var(--correct-light-bg);
+            border-color: var(--correct-dark);
         }
         .pregunta-bloc.correcte h3 {
-             color: var(--correct-dark); /* CANVI */
+             color: var(--correct-dark);
         }
         .pregunta-bloc.incorrecte {
-            background-color: var(--incorrect-light-bg); /* CANVI */
-            border-color: var(--incorrect-dark); /* CANVI */
+            background-color: var(--incorrect-light-bg);
+            border-color: var(--incorrect-dark);
         }
          .pregunta-bloc.incorrecte h3 {
-             color: var(--incorrect-dark); /* CANVI */
+             color: var(--incorrect-dark);
         }
 
         #feedback-area {
@@ -175,23 +232,23 @@
             border: 2px solid;
         }
         #feedback-area.correcte {
-            background-color: var(--correct-light-bg); /* CANVI */
-            border-color: var(--correct-dark); /* CANVI */
-            color: var(--correct-dark); /* CANVI */
+            background-color: var(--correct-light-bg);
+            border-color: var(--correct-dark);
+            color: var(--correct-dark);
         }
         #feedback-area.incorrecte {
-            background-color: var(--incorrect-light-bg); /* CANVI */
-            border-color: var(--incorrect-dark); /* CANVI */
-            color: var(--incorrect-dark); /* CANVI */
+            background-color: var(--incorrect-light-bg);
+            border-color: var(--incorrect-dark);
+            color: var(--incorrect-dark);
         }
         
         #reiniciarBtn {
-            background-color: #6c757d; /* CANVI */
-            color: #ffffff; /* CANVI */
+            background-color: #6c757d;
+            color: #ffffff;
             display: none; /* Amagat per defecte */
         }
         #reiniciarBtn:hover {
-            background-color: #5a6268; /* CANVI */
+            background-color: #5a6268;
             box-shadow: none;
         }
 
@@ -201,12 +258,23 @@
 
     <div class="container">
     
-        <!-- =========================== -->
-        <!--     PANTALLA D'INICI        -->
-        <!-- =========================== -->
         <div id="pantalla-inici">
             <h1>Anàlisi de Sessions</h1>
-            <p>Escolliu la sessió de Bizarrap que acabeu d'analitzar a classe:</p>
+            <p>Decidim quina sessió analitzarem. Fes clic a "Girar Ruleta!"</p>
+            
+            <div class="ruleta-container">
+                <canvas id="ruletaCanvas" width="300" height="300"></canvas>
+                <div class="ruleta-punter"></div>
+                <div id="ruleta-resultat">
+                    <div id="resultat-text"></div>
+                </div>
+            </div>
+            
+            <button id="girarBtn" class="bzrp-button">Girar Ruleta!</button>
+            
+            <hr style="margin: 30px 0; border: 1px solid #eee;">
+            
+            <p style="font-size: 1em; color: var(--medium-text);">O tria-la manualment:</p>
             
             <select id="selector-sessio">
                 <option value="">--- Tria una sessió ---</option>
@@ -228,9 +296,9 @@
         <!-- =========================== -->
         <!--   CONTINGUT DE L'ACTIVITAT  -->
         <!-- =========================== -->
+        <!-- *** FIX: HTML ESTRUCTURA CORREGIDA *** -->
         <div id="contingut-quiz">
-            <h2 id="quiz-titol"></h2> <!-- Títol dinàmic -->
-            
+            <h2 id="quiz-titol"></h2>
             <div id="preguntes-container">
                 <!-- Les preguntes es generaran amb JavaScript aquí -->
             </div>
@@ -260,6 +328,13 @@
         const reiniciarBtn = document.getElementById('reiniciarBtn');
         const feedbackArea = document.getElementById('feedback-area');
 
+        // --- NOU: Elements de la Ruleta ---
+        const girarBtn = document.getElementById('girarBtn');
+        const canvas = document.getElementById('ruletaCanvas');
+        const ctx = canvas.getContext('2d');
+        const resultatDisplay = document.getElementById('ruleta-resultat');
+        const resultatText = document.getElementById('resultat-text');
+        
         let sessioActual = null; // Per guardar quina sessió estem fent
 
         // --- Base de Dades de Preguntes (50 preguntes!) ---
@@ -267,311 +342,213 @@
             'naty_peluso': {
                 nom: 'Nathy Peluso (#36)',
                 preguntes: [
-                    { 
-                        p: "Quin estil musical sorprèn al *principi* de la cançó?", 
-                        o: ["Trap", "Salsa", "Reggaeton"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "Quan la cançó diu \"...se convierte en Nasty\", què passa amb la música?", 
-                        o: ["S'atura per complet", "Es torna més lenta i suau", "Canvia radicalment a un ritme de Rap/Trap"], 
-                        r: 2 
-                    },
-                    { 
-                        p: "Quin instrument destaca molt a la part de Salsa?", 
-                        o: ["El Piano", "Una guitarra elèctrica", "Un acordió"], 
-                        r: 0 
-                    },
-                    { 
-                        p: "Com és el \"flow\" (la manera de cantar) de Nathy a la part de rap?", 
-                        o: ["Suau i melòdic", "Agressiu, ràpid i amb força", "Xiuxiuejat"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "El canvi més gran d'aquesta sessió és de...", 
-                        o: ["Instrument", "Ritme i Estil", "Volum"], 
-                        r: 1 
-                    },
+                    { p: "Quin estil musical sorprèn al *principi* de la cançó?", o: ["Trap", "Salsa", "Reggaeton"], r: 1 },
+                    { p: "Quan la cançó diu \"...se convierte en Nasty\", què passa amb la música?", o: ["S'atura per complet", "Es torna més lenta i suau", "Canvia radicalment a un ritme de Rap/Trap"], r: 2 },
+                    { p: "Quin instrument destaca molt a la part de Salsa?", o: ["El Piano", "Una guitarra elèctrica", "Un acordió"], r: 0 },
+                    { p: "Com és el \"flow\" (la manera de cantar) de Nathy a la part de rap?", o: ["Suau i melòdic", "Agressiu, ràpid i amb força", "Xiuxiuejat"], r: 1 },
+                    { p: "El canvi més gran d'aquesta sessió és de...", o: ["Instrument", "Ritme i Estil", "Volum"], r: 1 },
                 ]
             },
             'lgante': {
                 nom: 'L-Gante (#38)',
                 preguntes: [
-                    { 
-                        p: "Quin gènere musical caracteritza a L-Gante en aquesta sessió?", 
-                        o: ["Cumbia 420", "Trap", "Pop"], 
-                        r: 0 
-                    },
-                    { 
-                        p: "Quin és el ritme principal que sona durant gairebé tota la cançó?", 
-                        o: ["Un ritme de Rock", "Un ritme de Cumbia", "Un ritme de Techno"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "Quin so característic (un \"sample\" de veu) es repeteix?", 
-                        o: ["'Dale Don Dale'", "'Cooooombia 420 pa' los negros'", "'Bizarrap!'"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "La línia de baix (el so greu) és...", 
-                        o: ["Molt complicada i ràpida", "Simple, repetitiva i enganxosa", "No hi ha baix"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "L'ambient de la cançó és...", 
-                        o: ["Trist i melancòlic", "De festa i \"de barri\"", "Molt elegant i clàssic"], 
-                        r: 1 
-                    },
+                    { p: "Quin gènere musical caracteritza a L-Gante en aquesta sessió?", o: ["Cumbia 420", "Trap", "Pop"], r: 0 },
+                    { p: "Quin és el ritme principal que sona durant gairebé tota la cançó?", o: ["Un ritme de Rock", "Un ritme de Cumbia", "Un ritme de Techno"], r: 1 },
+                    { p: "Quin so característic (un \"sample\" de veu) es repeteix?", o: ["'Dale Don Dale'", "'Cooooombia 420 pa' los negros'", "'Bizarrap!'"], r: 1 },
+                    { p: "La línia de baix (el so greu) és...", o: ["Molt complicada i ràpida", "Simple, repetitiva i enganxosa", "No hi ha baix"], r: 1 },
+                    { p: "L'ambient de la cançó és...", o: ["Trist i melancòlic", "De festa i \"de barri\"", "Molt elegant i clàssic"], r: 1 },
                 ]
             },
             'quevedo': {
                 nom: 'Quevedo (#52)',
                 preguntes: [
-                    { 
-                        p: "Com sona la veu de Quevedo a la introducció (\"intro\")?", 
-                        o: ["Molt forta i clara", "Filtrada, com si estigués lluny o per ràdio", "Amb un eco molt exagerat"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "Quina és la part més famosa i melòdica de la cançó?", 
-                        o: ["La part del rap ràpid", "La tornada que comença amb 'Quééédate...'", "El solo de sintetitzador"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "La melodia principal (\"la tonada\") està feta per...", 
-                        o: ["Un sintetitzador (un so electrònic)", "Una flauta", "Una guitarra espanyola"], 
-                        r: 0 
-                    },
-                    { 
-                        p: "Quan entra el ritme principal (el \"BOOM\") de la cançó?", 
-                        o: ["Just al principi", "Després de la primera tornada de 'Quédate'", "No hi ha ritme, és 'a capella'"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "L'ambient general d'aquesta cançó és...", 
-                        o: ["Agressiu i enfadat", "Electrònic i una mica melancòlic", "Molt alegre, tipus 'fiesta'"], 
-                        r: 1 
-                    },
+                    { p: "Com sona la veu de Quevedo a la introducció (\"intro\")?", o: ["Molt forta i clara", "Filtrada, com si estigués lluny o per ràdio", "Amb un eco molt exagerat"], r: 1 },
+                    { p: "Quina és la part més famosa i melòdica de la cançó?", o: ["La part del rap ràpid", "La tornada que comença amb 'Quééédate...'", "El solo de sintetitzador"], r: 1 },
+                    { p: "La melodia principal (\"la tonada\") està feta per...", o: ["Un sintetitzador (un so electrònic)", "Una flauta", "Una guitarra espanyola"], r: 0 },
+                    { p: "Quan entra el ritme principal (el \"BOOM\") de la cançó?", o: ["Just al principi", "Després de la primera tornada de 'Quédate'", "No hi ha ritme, és 'a capella'"], r: 1 },
+                    { p: "L'ambient general d'aquesta cançó és...", o: ["Agressiu i enfadat", "Electrònic i una mica melancòlic", "Molt alegre, tipus 'fiesta'"], r: 1 },
                 ]
             },
             'villano_antillano': {
                 nom: 'Villano Antillano (#51)',
                 preguntes: [
-                    { 
-                        p: "Quin és l'estil principal d'aquesta sessió?", 
-                        o: ["Pop melòdic", "Trap potent i directe", "Salsa"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "El \"flow\" (manera de rapejar) de Villano Antillano és principalment...", 
-                        o: ["Ràpid, agressiu i amb molta confiança", "Suau i cantat lentament", "Trist i suau"], 
-                        r: 0 
-                    },
-                    { 
-                        p: "El so greu (baix) que domina la base és un...", 
-                        o: ["Baix elèctric de Jazz", "Baix 808 (molt greu i distorsionat)", "No té gairebé greus"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "Bizarrap utilitza un canvi de ritme (un \"beat switch\") a la meitat?", 
-                        o: ["Sí, canvia a un ritme més lent", "No, manté la mateixa energia tota l'estona", "Sí, canvia a un ritme de Cumbia"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "Aquesta sessió és coneguda per ser un himne de...", 
-                        o: ["Futbol", "Empoderament i la comunitat LGTBIQ+", "Natura i ecologia"], 
-                        r: 1 
-                    },
+                    { p: "Quin és l'estil principal d'aquesta sessió?", o: ["Pop melòdic", "Trap potent i directe", "Salsa"], r: 1 },
+                    { p: "El \"flow\" (manera de rapejar) de Villano Antillano és principalment...", o: ["Ràpid, agressiu i amb molta confiança", "Suau i cantat lentament", "Trist i suau"], r: 0 },
+                    { p: "El so greu (baix) que domina la base és un...", o: ["Baix elèctric de Jazz", "Baix 808 (molt greu i distorsionat)", "No té gairebé greus"], r: 1 },
+                    { p: "Bizarrap utilitza un canvi de ritme (un \"beat switch\") a la meitat?", o: ["Sí, canvia a un ritme més lent", "No, manté la mateixa energia tota l'estona", "Sí, canvia a un ritme de Cumbia"], r: 1 },
+                    { p: "Aquesta sessió és coneguda per ser un himne de...", o: ["Futbol", "Empoderament i la comunitat LGTBIQ+", "Natura i ecologia"], r: 1 },
                 ]
             },
             'shakira': {
                 nom: 'Shakira (#53)',
                 preguntes: [
-                    { 
-                        p: "El tema principal de la lletra és...", 
-                        o: ["Una història personal (\"beef\")", "Una festa a la platja", "Un problema polític"], 
-                        r: 0 
-                    },
-                    { 
-                        p: "Què passa amb la música (la \"base\") durant la cançó?", 
-                        o: ["És sempre igual per no molestar la lletra", "Canvia de ritme i estil diverses vegades", "Només és un piano"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "Com és la part que diu \"...una loba como yo no está pa' tipos como tú\"?", 
-                        o: ["Molt ràpida i rapejada", "Més melòdica i pop", "Amb un ritme de salsa"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "La part final (\"Clara-mente...\") té un so...", 
-                        o: ["Acústic, amb guitarres", "Electrònic i robòtic (amb vocoder)", "De rock, amb bateria molt forta"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "Bizarrap adapta la producció...", 
-                        o: ["Perquè soni exactament igual que la de Quevedo", "Ignorant la lletra de Shakira", "Per acompanyar cada canvi en la lletra i la història"], 
-                        r: 2 
-                    },
+                    { p: "El tema principal de la lletra és...", o: ["Una història personal (\"beef\")", "Una festa a la platja", "Un problema polític"], r: 0 },
+                    { p: "Què passa amb la música (la \"base\") durant la cançó?", o: ["És sempre igual per no molestar la lletra", "Canvia de ritme i estil diverses vegades", "Només és un piano"], r: 1 },
+                    { p: "Com és la part que diu \"...una loba como yo no está pa' tipos como tú\"?", o: ["Molt ràpida i rapejada", "Més melòdica i pop", "Amb un ritme de salsa"], r: 1 },
+                    { p: "La part final (\"Clara-mente...\") té un so...", o: ["Acústic, amb guitarres", "Electrònic i robòtic (amb vocoder)", "De rock, amb bateria molt forta"], r: 1 },
+                    { p: "Bizarrap adapta la producció...", o: ["Perquè soni exactament igual que la de Quevedo", "Ignorant la lletra de Shakira", "Per acompanyar cada canvi en la lletra i la història"], r: 2 },
                 ]
             },
             'arcangel': {
                 nom: 'Arcángel (#54)',
                 preguntes: [
-                    { 
-                        p: "Quants estils musicals clars barreja Bizarrap en aquesta sessió?", 
-                        o: ["Només un (Trap)", "Dos (Trap i Reggaeton Clàssic)", "Tres (Trap, Salsa i Pop)"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "Com és la *primera* part de la cançó?", 
-                        o: ["Un ritme de Reggaeton clàssic, lent", "Un ritme de Trap modern i agressiu", "Una balada amb piano"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "Com és la *segona* part de la cançó (el \"beat switch\")?", 
-                        o: ["Un ritme de Reggaeton \"old school\" (antic)", "Un ritme de Cumbia", "Silenci, només veu"], 
-                        r: 0 
-                    },
-                    { 
-                        p: "Aquesta sessió és un homenatge a...", 
-                        o: ["El Rock Argentí", "Els inicis i l'època daurada del Reggaeton", "La música Disco"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "El \"flow\" d'Arcángel és conegut per ser...", 
-                        o: ["Molt melòdic i suau, gairebé sense rapejar", "Un dels més respectats i tècnics del gènere", "Molt simple i lent"], 
-                        r: 1 
-                    },
+                    { p: "Quants estils musicals clars barreja Bizarrap en aquesta sessió?", o: ["Només un (Trap)", "Dos (Trap i Reggaeton Clàssic)", "Tres (Trap, Salsa i Pop)"], r: 1 },
+                    { p: "Com és la *primera* part de la cançó?", o: ["Un ritme de Reggaeton clàssic, lent", "Un ritme de Trap modern i agressiu", "Una balada amb piano"], r: 1 },
+                    { p: "Com és la *segona* part de la cançó (el \"beat switch\")?", o: ["Un ritme de Reggaeton \"old school\" (antic)", "Un ritme de Cumbia", "Silenci, només veu"], r: 0 },
+                    { p: "Aquesta sessió és un homenatge a...", o: ["El Rock Argentí", "Els inicis i l'època daurada del Reggaeton", "La música Disco"], r: 1 },
+                    { p: "El \"flow\" d'Arcángel és conegut per ser...", o: ["Molt melòdic i suau, gairebé sense rapejar", "Un dels més respectats i tècnics del gènere", "Molt simple i lent"], r: 1 },
                 ]
             },
             'duki': {
                 nom: 'Duki (#50)',
                 preguntes: [
-                    { 
-                        p: "Com comença la sessió?", 
-                        o: ["Amb un àudio antic de Duki parlant de Bizarrap", "Amb Duki cantant 'a capella'", "Amb un so d'explosió"], 
-                        r: 0 
-                    },
-                    { 
-                        p: "Quin és l'estil principal de la sessió?", 
-                        o: ["Pop", "Trap", "Cumbia"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "Com és el so del baix (808) en aquesta cançó?", 
-                        o: ["Molt potent, greu i distorsionat", "Suau i gairebé no se sent", "És un baix acústic"], 
-                        r: 0 
-                    },
-                    { 
-                        p: "L'ambient general de la producció és...", 
-                        o: ["Molt alegre i tropical", "Fosc, èpic i cinematogràfic", "Simple i minimalista"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "Cap al final, hi ha un canvi de ritme (\"beat switch\") que és...", 
-                        o: ["Molt més agressiu i ràpid", "Més melòdic i \"celestial\"", "Un ritme de Reggaeton"], 
-                        r: 1 
-                    },
+                    { p: "Com comença la sessió?", o: ["Amb un àudio antic de Duki parlant de Bizarrap", "Amb Duki cantant 'a capella'", "Amb un so d'explosió"], r: 0 },
+                    { p: "Quin és l'estil principal de la sessió?", o: ["Pop", "Trap", "Cumbia"], r: 1 },
+                    { p: "Com és el so del baix (808) en aquesta cançó?", o: ["Molt potent, greu i distorsionat", "Suau i gairebé no se sent", "És un baix acústic"], r: 0 },
+                    { p: "L'ambient general de la producció és...", o: ["Molt alegre i tropical", "Fosc, èpic i cinematogràfic", "Simple i minimalista"], r: 1 },
+                    { p: "Cap al final, hi ha un canvi de ritme (\"beat switch\") que és...", o: ["Molt més agressiu i ràpid", "Més melòdic i \"celestial\"", "Un ritme de Reggaeton"], r: 1 },
                 ]
             },
             'paulo_londra': {
                 nom: 'Paulo Londra (#23)',
                 preguntes: [
-                    { 
-                        p: "Per què va ser tan famosa aquesta sessió abans de sortir?", 
-                        o: ["Perquè era la més llarga", "Perquè era el gran retorn de Paulo Londra a la música", "Perquè era la primera sessió de Biza"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "Com comença la cançó, d'una manera poc habitual en Biza?", 
-                        o: ["Amb un solo de bateria", "Amb Bizarrap tocant el piano", "Amb un so de pluja"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "Quin estil té la cançó, diferent del Trap habitual?", 
-                        o: ["Un estil Pop-Rock, amb guitarres", "Un estil de Salsa", "Un estil de Techno"], 
-                        r: 0 
-                    },
-                    { 
-                        p: "Quin instrument (que no és electrònic) té molt de protagonisme?", 
-                        o: ["Un violí", "Una guitarra elèctrica", "Una flauta"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "L'ambient de la cançó és...", 
-                        o: ["Fosc i agressiu", "Emotiu i d'esperança", "De festa descontrolada"], 
-                        r: 1 
-                    },
+                    { p: "Per què va ser tan famosa aquesta sessió abans de sortir?", o: ["Perquè era la més llarga", "Perquè era el gran retorn de Paulo Londra a la música", "Perquè era la primera sessió de Biza"], r: 1 },
+                    { p: "Com comença la cançó, d'una manera poc habitual en Biza?", o: ["Amb un solo de bateria", "Amb Bizarrap tocant el piano", "Amb un so de pluja"], r: 1 },
+                    { p: "Quin estil té la cançó, diferent del Trap habitual?", o: ["Un estil Pop-Rock, amb guitarres", "Un estil de Salsa", "Un estil de Techno"], r: 0 },
+                    { p: "Quin instrument (que no és electrònic) té molt de protagonisme?", o: ["Un violí", "Una guitarra elèctrica", "Una flauta"], r: 1 },
+                    { p: "L'ambient de la cançó és...", o: ["Fosc i agressiu", "Emotiu i d'esperança", "De festa descontrolada"], r: 1 },
                 ]
             },
             'young_miko': {
                 nom: 'Young Miko (#58)',
                 preguntes: [
-                    { 
-                        p: "Quin so d'animal es pot sentir al principi de la base?", 
-                        o: ["Un lladruc (gos)", "Un miol (gat)", "Un rugit (lleó)"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "Quin és l'estil principal de la sessió?", 
-                        o: ["Trap", "Pop acústic", "Reggaeton clàssic"], 
-                        r: 0 
-                    },
-                    { 
-                        p: "Com és el \"flow\" (manera de cantar) de Young Miko?", 
-                        o: ["Molt ràpid i agressiu", "Relaxat, \"xulesc\" i melòdic", "Molt agut i cridat"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "El ritme és perfecte per...", 
-                        o: ["Un club o discoteca", "Dormir", "Estudiar"], 
-                        r: 0 
-                    },
-                    { 
-                        p: "El canvi de ritme (\"beat switch\") de la meitat és...", 
-                        o: ["Més lent i trist", "Més ràpid i electrònic", "No hi ha canvi de ritme"], 
-                        r: 1 
-                    },
+                    { p: "Quin so d'animal es pot sentir al principi de la base?", o: ["Un lladruc (gos)", "Un miol (gat)", "Un rugit (lleó)"], r: 1 },
+                    { p: "Quin és l'estil principal de la sessió?", o: ["Trap", "Pop acústic", "Reggaeton clàssic"], r: 0 },
+                    { p: "Com és el \"flow\" (manera de cantar) de Young Miko?", o: ["Molt ràpid i agressiu", "Relaxat, \"xulesc\" i melòdic", "Molt agut i cridat"], r: 1 },
+                    { p: "El ritme és perfecte per...", o: ["Un club o discoteca", "Dormir", "Estudiar"], r: 0 },
+                    { p: "El canvi de ritme (\"beat switch\") de la meitat és...", o: ["Més lent i trist", "Més ràpid i electrònic", "No hi ha canvi de ritme"], r: 1 },
                 ]
             },
             'ptazeta': {
                 nom: 'Ptazeta (#45)',
                 preguntes: [
-                    { 
-                        p: "El \"flow\" (manera de rapejar) de Ptazeta és conegut per ser...", 
-                        o: ["Molt lent i pausat", "Molt ràpid, amb mètriques complexes", "Sempre cantat (melòdic)"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "El ritme principal de la cançó és...", 
-                        o: ["Una balada", "Un ritme de Rap/Trap directe", "Un ritme de Cumbia"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "La base musical que fa Bizarrap és...", 
-                        o: ["Molt complexa, amb molts instruments", "Bastant simple i fosca, per donar espai a la veu", "Alegre i amb trompetes"], 
-                        r: 1 
-                    },
-                    { 
-                        p: "Com és el canvi de ritme (\"beat switch\") que hi ha?", 
-                        o: ["Canvia a un so més 'Boom Bap' (Rap clàssic)", "Canvia a Salsa", "No hi ha canvi de ritme"], 
-                        r: 0 
-                    },
-                    { 
-                        p: "L'actitud que transmet la cançó és de...", 
-                        o: ["Tristesa", "Confiança i \"xuleria\"", "Por"], 
-                        r: 1 
-                    },
+                    { p: "El \"flow\" (manera de rapejar) de Ptazeta és conegut per ser...", o: ["Molt lent i pausat", "Molt ràpid, amb mètriques complexes", "Sempre cantat (melòdic)"], r: 1 },
+                    { p: "El ritme principal de la cançó és...", o: ["Una balada", "Un ritme de Rap/Trap directe", "Un ritme de Cumbia"], r: 1 },
+                    { p: "La base musical que fa Bizarrap és...", o: ["Molt complexa, amb molts instruments", "Bastant simple i fosca, per donar espai a la veu", "Alegre i amb trompetes"], r: 1 },
+                    { p: "Com és el canvi de ritme (\"beat switch\") que hi ha?", o: ["Canvia a un so més 'Boom Bap' (Rap clàssic)", "Canvia a Salsa", "No hi ha canvi de ritme"], r: 0 },
+                    { p: "L'actitud que transmet la cançó és de...", o: ["Tristesa", "Confiança i \"xuleria\"", "Por"], r: 1 },
                 ]
             },
         };
+
+        // --- NOU: Lògica de la Ruleta ---
+        const baseDadesRuleta = [
+            { nom: 'N. Peluso', clau: 'naty_peluso' },
+            { nom: 'L-Gante', clau: 'lgante' },
+            { nom: 'Quevedo', clau: 'quevedo' },
+            { nom: 'Villano A.', clau: 'villano_antillano' },
+            { nom: 'Shakira', clau: 'shakira' },
+            { nom: 'Arcángel', clau: 'arcangel' },
+            { nom: 'Duki', clau: 'duki' },
+            { nom: 'P. Londra', clau: 'paulo_londra' },
+            { nom: 'Y. Miko', clau: 'young_miko' },
+            { nom: 'Ptazeta', clau: 'ptazeta' }
+        ];
+        const colorsRuleta = ["#FF6B6B", "#FFD166", "#06D6A0", "#118AB2", "#073B4C", "#E76F51", "#F4A261", "#E9C46A", "#2A9D8F", "#264653"];
+        const numSectors = baseDadesRuleta.length;
+        const sliceAngle = (2 * Math.PI) / numSectors;
+        const radius = canvas.width / 2;
+        const centerX = radius;
+        const centerY = radius;
+        let angleActual = 0;
+        let girant = false;
+
+        function dibuixarRuleta() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // *** FIX: S'ha canviat la sintaxi de CSS "var()" per JS directe ***
+            ctx.font = "12px 'Roboto Mono', monospace"; 
+            
+            for (let i = 0; i < numSectors; i++) {
+                // Dibuixa la secció de color
+                ctx.fillStyle = colorsRuleta[i % colorsRuleta.length];
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, i * sliceAngle, (i + 1) * sliceAngle);
+                ctx.closePath();
+                ctx.fill();
+                
+                // Dibuixa el text
+                ctx.save();
+                ctx.fillStyle = "#000"; // Text negre per llegir-lo bé
+                ctx.translate(centerX, centerY);
+                ctx.rotate((i * sliceAngle) + (sliceAngle / 2));
+                ctx.textAlign = "right";
+                ctx.fillText(baseDadesRuleta[i].nom, radius - 10, 5); // Ajusta la posició del text
+                ctx.restore();
+            }
+        }
+        
+        girarBtn.addEventListener('click', function() {
+            if (girant) return; // Evita clics múltiples
+            girant = true;
+            
+            // Força de gir aleatòria (almenys 5 voltes + una part aleatòria)
+            const voltesComençament = 5 * (2 * Math.PI);
+            const angleFinalAleatori = Math.random() * (2 * Math.PI);
+            const angleGirTotal = voltesComençament + angleFinalAleatori;
+
+            // Reseteja la transició i gira
+            canvas.style.transition = 'none';
+            canvas.style.transform = `rotate(${angleActual}rad)`;
+            
+            // Forcem un "reflow" perquè el navegador agafi el canvi
+            canvas.offsetHeight; 
+            
+            // Afegim la transició i girem a la posició final
+            canvas.style.transition = 'transform 5s cubic-bezier(0.25, 1, 0.5, 1)';
+            canvas.style.transform = `rotate(${angleGirTotal}rad)`;
+            
+            angleActual = angleGirTotal; // Guardem la nova posició
+
+            // Esperem que acabi l'animació CSS (5 segons)
+            setTimeout(() => {
+                acabarGir(angleGirTotal);
+            }, 5100); // 5000ms de l'animació + 100ms de marge
+        });
+        
+        function acabarGir(finalAngle) {
+            girant = false;
+            
+            // Calculem el guanyador
+            let angleNormalitzat = finalAngle % (2 * Math.PI);
+            if (angleNormalitzat < 0) angleNormalitzat += (2 * Math.PI);
+            
+            // El punter està a la dreta (0 rad). Invertim la direcció.
+            angleNormalitzat = (2 * Math.PI) - angleNormalitzat;
+            
+            const indexGuanyador = Math.floor(angleNormalitzat / sliceAngle);
+            const guanyador = baseDadesRuleta[indexGuanyador % numSectors];
+
+            // Mostra el pop-up del guanyador
+            resultatText.innerText = guanyador.nom;
+            resultatDisplay.style.display = 'flex';
+
+            // Actualitza el selector (el dropdown)
+            selectorSessio.value = guanyador.clau;
+            
+            // Amaga el pop-up després d'uns segons
+            setTimeout(() => {
+                resultatDisplay.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Dibuixem la ruleta quan la pàgina carrega
+        dibuixarRuleta();
         
         // --- Lògica d'Inici ---
         startBtn.addEventListener('click', function() {
             const sessioTriada = selectorSessio.value;
             if (sessioTriada === "") {
-                // No facis servir alert()
-                // Creem un petit avís
                 let errorMsg = document.getElementById('error-selector');
                 if (!errorMsg) {
                     errorMsg = document.createElement('p');
